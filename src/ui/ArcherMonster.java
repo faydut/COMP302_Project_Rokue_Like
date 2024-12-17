@@ -8,7 +8,7 @@ class ArcherMonster extends Monster {
     @Override
     public void act(Player player) {
     	
-    	//System.out.println("it is in aarcher");
+    	System.out.println("it is in aarcher");
         int distance = Math.abs(player.getRow() - row) + Math.abs(player.getCol() - col);
         
         if (distance < 4 && !player.isWearingCloak()) {

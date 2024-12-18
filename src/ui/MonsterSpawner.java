@@ -16,6 +16,7 @@ public class MonsterSpawner {
     private String archer = "src/assets/rokue-like assets/archer.png";
     private String fighter = "src/assets/rokue-like assets/fighter.png";
     private String wizard = "src/assets/rokue-like assets/wizard.png";
+    private Timer spawnTimer;
     
     public ArrayList<Monster> getMonsters() {
 		return monsters;
@@ -28,16 +29,26 @@ public class MonsterSpawner {
         this.player = player;
         this.objectList=  objectList;
     }
+   
 
     public void startSpawning() {
-        // Spawn monsters every 8 seconds
-        Timer spawnTimer = new Timer(8000, e -> spawnMonster());
+    	monsters.clear();
+
+    	 if (spawnTimer == null) {
+    	        spawnTimer = new Timer(8000, e -> {
+    	            System.out.println("8 seconds passed");
+    	            spawnMonster();
+    	        });
+    	    }
+    	    spawnTimer.start();
        
 
         // Make all monsters act every second
        
-        spawnTimer.start();
+        
+        
         Timer actionTimer = new Timer(1000, e -> {
+        	System.out.println("monster length:"+monsters.size());
             for (Monster monster : monsters) {
                 monster.act(player); // Each monster acts periodically
             }
@@ -45,11 +56,18 @@ public class MonsterSpawner {
         actionTimer.start();
        
     }
+    public void stopSpawning() {
+        if (spawnTimer != null) {
+            spawnTimer.stop(); // Stop the spawn timer
+            System.out.println("Monster spawning stopped.");
+        }
+        monsters.clear(); // Clear the list of monsters
+    }
 
     private void spawnMonster() {
     	
 
-    	int cellSize = 60; 
+    	//int cellSize = 50; 
         int row, col;
 
         // Find a random empty cell
@@ -78,6 +96,7 @@ public class MonsterSpawner {
                 monster = new ArcherMonster(row, col);
                 ImageIcon image= new ImageIcon(archer);
                 monsterLabel.setIcon(image);
+                monsterLabel.setName("nonempty");
                 
                // monsterLabel.setForeground(Color.red);
             }
@@ -85,12 +104,14 @@ public class MonsterSpawner {
                 monster = new FighterMonster(row, col, grid);
                 ImageIcon image= new ImageIcon(fighter);
                 monsterLabel.setIcon(image);// Fighter symbol
+                monsterLabel.setName("nonempty");
                 //monsterLabel.setForeground(Color.orange);
             }
             case 2 -> {
                 monster = new WizardMonster(row, col, grid,objectList);
                 ImageIcon image= new ImageIcon(wizard);
                 monsterLabel.setIcon(image);
+                monsterLabel.setName("nonempty");
             }
             default -> throw new IllegalStateException("Unexpected monster type: " + type);
         }

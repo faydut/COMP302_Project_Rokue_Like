@@ -16,7 +16,7 @@ class WizardMonster extends Monster {
 
    @Override
    public void act(Player player ) {
-   	System.out.println("it is in wizarrd");
+   	//System.out.println("it is in wizarrd");
        
 		// Randomly teleport the rune every 5 seconds
    	Timer spawnTimer = new Timer(5000, e -> teleport(objectList));
@@ -25,16 +25,16 @@ class WizardMonster extends Monster {
        
    }
    private void teleport(ArrayList<JLabel> objectList) {
-   	System.out.println("it is in teleport");
+   //	System.out.println("it is in teleport");
    	for(JLabel obj: objectList) {
    		if(obj.getName().equals("rune")) {
-   			System.out.println("yes is hide:"+ obj.getText());
-   			obj.setName("regular");
+   			//System.out.println("yes is hide:"+ obj.getText());
+   			obj.setName("nonempty");
    		}
    	}
-   	int num= random.nextInt(6);
+   	int num= random.nextInt(objectList.size());
    	objectList.get(num).setName("rune");
-   	System.out.println("rune object:"+objectList.get(num).getText());
+   	//System.out.println("rune object:"+objectList.get(num).getText());
    	
    }
 }

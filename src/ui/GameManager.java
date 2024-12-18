@@ -10,26 +10,30 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameManager  {
-    private static final int gridSize = 10;
-    private static final String rune = "src/assets/rokue-like assets/key3.png";
-    private static final String wall = "#";
-    private static final String empty = "empty";
+    private  final int gridSize = 12;
+    private  final String rune = "src/assets/rokue-like assets/key3.png";
+    private  final String openDoor = "src/assets/items/door_open.png";
+    private  final String closeDoor = "src/assets/items/door_closed.png";
+    private  final String wall = "#";
+    private  final String empty = "empty";
     //private static final String nonEmpty = "nonempty";
-    private static final String PLAYER = "src/assets/rokue-like assets/player.png";
+    private  final String PLAYER = "src/assets/rokue-like assets/player.png";
     private Timer hallTimer; // Timer for countdown
     private int timeLeft;    // Remaining time for the current hall
     private int currentHallIndex = 0; // Tracks the current hall
-	private static final int EXIT_ON_CLOSE = 0;
-	public static Player player;
+	private  final int EXIT_ON_CLOSE = 0;
+	public  Player player;
 	Random random = new Random();
-    public static JLabel[][] gridLabels = new JLabel[gridSize][gridSize];
-    private int playerRow; // Player's starting position
-    private int playerCol;
-    private InventoryPanel inventoryPanel;
+    public  JLabel[][] gridLabels = new JLabel[gridSize][gridSize];
     
-    private static JFrame frame= new JFrame();
-    public static ArrayList<JLabel >objectList= new ArrayList();
-    ArrayList<Icon[][]> completedHalls;
+    private InventoryPanel inventoryPanel;
+    private      HallPanel  hallPanel;
+    private MonsterSpawner spawner; 
+    
+    private  JFrame frame= new JFrame();
+    public  ArrayList<JLabel >objectList= new ArrayList();
+    private ArrayList<JLabel> doorList= new ArrayList();
+    public  ArrayList<Icon[][]> completedHalls;
     
    
     public GameManager(ArrayList<Icon[][]> completedHalls ) {
@@ -51,15 +55,14 @@ public class GameManager  {
        // frame.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
 
        // initializeGrid();
+        initializeHallPanel();
+        initializeInventoryPanel();
         initializeUI();
         addRuneRandomly();
-        addRightSideUI();
-       
         placePlayerRandomly();
+        spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList());
+        spawner.startSpawning();  
         startTimerForCurrentHall();
-        
-       
-       
        frame.addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -83,30 +86,32 @@ public class GameManager  {
 
     
 
-    public static Player getPlayer() {
+    public  Player getPlayer() {
 		return player;
 	}
 
 
 
-	public static JLabel[][] getGridLabels() {
+	public  JLabel[][] getGridLabels() {
 		return gridLabels;
 	}
 
 
 
-	public static ArrayList<JLabel> getObjectList() {
+	public  ArrayList<JLabel> getObjectList() {
 		return objectList;
 	}
 
 
 
 	public void placePlayerRandomly() {
-    	        int cellSize = 60;
+		    int playerRow; // Player's starting position
+	        int playerCol;
+    	       // int cellSize = 60;
                 playerRow = random.nextInt(gridSize - 2) +1; // Avoid walls
                 playerCol = random.nextInt(gridSize - 2) +1;
                
-        player = new Player(playerRow, playerCol);
+        player = new Player(playerRow, playerCol,frame);
        
         player.setCol(playerCol);
         player.setRow(playerRow);
@@ -125,11 +130,22 @@ public class GameManager  {
         //playerLabel.setOpaque(true);
        // playerLabel.setBackground(Color.BLUE);
     }
-	private void addRightSideUI() {
+	
+
+
+	private void initializeInventoryPanel() {
 		inventoryPanel = new InventoryPanel();
 	    frame.getContentPane().add(inventoryPanel);
 
     }
+	private void initializeHallPanel() {
+        hallPanel = new HallPanel();
+        hallPanel.setLayout(null); // Use null layout for manual positioning
+        hallPanel.setBackground(Color.LIGHT_GRAY); // Example background for hall panel
+        frame.add(hallPanel, BorderLayout.CENTER); // Add hallPanel to center of frame
+        
+    }
+	
 	private int countObjectsInCurrentHall() {
 	    Icon[][] selectedHall = completedHalls.get(currentHallIndex);
 	    int count = 0;
@@ -146,7 +162,7 @@ public class GameManager  {
 
 	
 	private void initializeUI() {
-	    int cellSize = 60;
+	    int cellSize = 50;
 
 	    // Check if completedHalls is not empty
 	    if (completedHalls == null || completedHalls.isEmpty()) {
@@ -166,8 +182,18 @@ public class GameManager  {
 	            gridLabels[i][j].setVerticalAlignment(SwingConstants.CENTER);
 	            gridLabels[i][j].setFont(new Font("Arial", Font.BOLD, 24));
 	            gridLabels[i][j].setBounds(j * cellSize, i * cellSize, cellSize, cellSize);
-	            frame.getContentPane().add(gridLabels[i][j]);
+	            gridLabels[i][j].setBorder(BorderFactory.createLineBorder(Color.black)); //
+	            hallPanel.add(gridLabels[i][j]);
 
+	            frame.getContentPane().add(gridLabels[i][j]);
+                if(i==gridSize-1 && j==3 ) {                      // I put door
+                	ImageIcon icon= new ImageIcon(closeDoor);
+                	gridLabels[i][j].setIcon(icon);
+                	gridLabels[i][j].setName("openDoor");
+                	gridLabels[i][j].setHorizontalAlignment(SwingConstants.CENTER);
+    	            gridLabels[i][j].setVerticalAlignment(SwingConstants.CENTER);
+                	doorList.add(gridLabels[i][j]);
+                }
 	            if (i == 0 || i == gridSize - 1 || j == 0 || j == gridSize - 1) {
 	                gridLabels[i][j].setText(wall); // Create walls at the edges
 	            } else {
@@ -175,7 +201,6 @@ public class GameManager  {
 	                Icon icon = selectedHall[i][j];
 	               // System.out.println("icon:"+icon);
 	                gridLabels[i][j].setIcon(icon);
-	             //   gridLabels[i][j].setBorder(BorderFactory.createLineBorder(Color.black)); //
 	                addMouseListener(i, j);
 
 	                if (icon != null) {
@@ -216,9 +241,10 @@ public class GameManager  {
 	
 	private void addRuneRandomly() {
 		int length= objectList.size();
+		
 		int num= random.nextInt(length);
 		objectList.get(num).setName("rune");
-		System.out.println("rune in which object:"+objectList.get(num));
+		System.out.println("rune in which object:"+objectList.get(num).getName());
 		
 	}
 
@@ -227,7 +253,7 @@ public class GameManager  {
     	gridLabels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-            	if (e.getButton() == MouseEvent.MOUSE_CLICKED) { // Check for right-click  button 1 for left click and button3 for right click
+            	if (e.getButton() == MouseEvent.BUTTON1) { // Check for right-click  button 1 for left click and button3 for right click
             		System.out.println("it is clicked");
             		handleCellClick(row, col);
                    
@@ -237,22 +263,45 @@ public class GameManager  {
         });
     	
     }
+    private void cleanHall() {
+    	for( int i=0; i<gridSize-1; i++) {
+    		for(int j=0; j<gridSize-1; j++) {
+    			gridLabels[i] [j].setIcon(null);
+    			
+    		}
+    	}
+    	
+    
+    }
     private void loadNextHall() {
         currentHallIndex++;
         if (currentHallIndex < completedHalls.size()) {
-            initializeUI();           // Load the next hall
-            placePlayerRandomly();    // Place the player randomly
-            startTimerForCurrentHall(); // Restart the timer
+        	if (spawner != null) {
+                spawner.stopSpawning();
+            }
+        	  initializeUI();           // Load the next hall's UI
+              placePlayerRandomly();    // Place the player randomly
+              startTimerForCurrentHall(); // Restart the hall timer
+              addRuneRandomly(); 
+               spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList());
+              spawner.startSpawning();  
+           
+            
+            
         } else {
             JOptionPane.showMessageDialog(frame, "Congratulations! You completed all halls!", "Game Completed", JOptionPane.INFORMATION_MESSAGE);
+            spawner.stopSpawning();
             frame.dispose(); // End the game
         }
+    }
+    private  JLabel findDoorLabel() {
+    	return doorList.get(0);
     }
 
     private void handleCellClick(int row, int col) {
     	int distance = Math.abs(player.getRow() - row) + Math.abs(player.getCol() - col);
         String RuneName =  gridLabels[row][col].getName();
-        
+        System.out.println("runeName:"+RuneName);
        
         // Check if the clicked cell hides the rune
         if(distance ==1) {
@@ -261,7 +310,7 @@ public class GameManager  {
         		
                 System.out.println("You found the hidden rune!");
                 SoundPlayer.playSound("src/assets/sounds/door-opening.wav");
-              ;
+             
                 ImageIcon originalIcon = new ImageIcon(rune);
 
                 // Resize the image to fit the JLabel
@@ -269,13 +318,27 @@ public class GameManager  {
                 ImageIcon scaledIcon = new ImageIcon(scaledImage);
                
                 
-                gridLabels[row][col] .setIcon(scaledIcon);  // Reveal the rune
-                gridLabels[row][col].setBackground(new Color(128, 0, 128));
-                gridLabels[row][col].setOpaque(true);
-                hallTimer.stop(); // Stop the timer as the rune is found
-                JOptionPane.showMessageDialog(frame, "You found the rune! Loading the next hall...", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-                loadNextHall(); // Load the next hall            } 
+                 gridLabels[row][col] .setIcon(scaledIcon);  // Reveal the rune
+                // gridLabels[row][col].setBackground(new Color(128, 0, 128));
+                // gridLabels[row][col].setOpaque(true);
+                 hallTimer.stop(); // Stop the timer as the rune is found
+                 ImageIcon icon = new ImageIcon(openDoor);
+                 JLabel door= findDoorLabel();
+                 door.setIcon(icon);
+                 System.out.println("waitt");
+                 
+            	// loadNextHall(); // Load the next hall    
+             
+              
+                
+                	 
+                 
+                 
+                         
+  } 
+        	
+        	
+        	
         	
         }
         else {
@@ -285,8 +348,9 @@ public class GameManager  {
 
     
 }
+   
 
-    }
+    
     private boolean isEmpty(int row, int col) {
     	//boolean empty= false;
     	JLabel cell= gridLabels[row][col];
@@ -301,16 +365,18 @@ public class GameManager  {
     
 
     private void movePlayer(int rowChange, int colChange) {
+    	int playerRow=  player.getRow();
+        int playerCol= player.getCol();
         int newRow = playerRow + rowChange;
         int newCol = playerCol + colChange;
+        
        
-       
-        if(isEmpty(newRow,newCol)==true) {
+        if(isEmpty(newRow,newCol)==true ||gridLabels[newRow][newCol].getName().equals("openDoor")  ) {
         	gridLabels[playerRow][playerCol].setName(empty);	
         	gridLabels[playerRow][playerCol].setIcon(null);
         	
-        	playerRow = newRow;
-            playerCol = newCol;
+          	 playerRow = newRow;
+             playerCol = newCol;
             
             
             ImageIcon image= new ImageIcon(PLAYER);
@@ -318,7 +384,14 @@ public class GameManager  {
             
             player.setCol(playerCol);
             player.setRow(playerRow);
-            
+            if ("openDoor".equals(gridLabels[newRow][newCol].getName())) {
+                System.out.println("Player reached the open door. Loading next hall...");
+                cleanHall();
+           	    gridLabels[player.getRow()][player.getCol()].setIcon(null); 
+           	    objectList.clear();
+           	    doorList.clear();
+                loadNextHall(); // Transition to the next hall
+            }
            
             
            

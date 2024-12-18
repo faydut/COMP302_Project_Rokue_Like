@@ -1,11 +1,17 @@
 package ui;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 class Player {
+	private JFrame frame;
     private int row, col;
     private int lives = 3;
     private boolean wearingCloak = false;
 
-    public Player(int row, int col) {
+    
+    public Player(int row, int col, JFrame frame) {
+    	this.frame = frame;
         this.row = row;
         this.col = col;
     }
@@ -42,8 +48,8 @@ class Player {
         lives--;
         System.out.println("Life lost! Remaining lives: " + lives);
         if (lives <= 0) {
-            System.out.println("Game Over!");
-          //  System.exit(0); // gane over ekrani gelecek
+            JOptionPane.showMessageDialog(frame, "You Lose All Lives", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            new MainMenu();
         }
     }
 }

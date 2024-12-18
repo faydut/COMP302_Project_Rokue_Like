@@ -6,9 +6,7 @@ import java.awt.*;
 public class HallPanel extends JPanel {
     private Image backgroundImage;
 
-    public HallPanel(String imagePath) {
-        this.backgroundImage = new ImageIcon(imagePath).getImage();
-    }
+  
 
     @Override
     protected void paintComponent(Graphics g) {

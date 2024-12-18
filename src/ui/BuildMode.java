@@ -13,9 +13,10 @@ public class BuildMode {
 
     private final int GRID_ROWS = 12;
     private final int GRID_COLS = 12;
+    private  final String closeDoor = "src/assets/items/door_closed.png";
 
     private String[] hallNames = {"Earth Hall", "Air Hall", "Water Hall", "Fire Hall"};
-    private int[] minRequirements = {11, 9, 13, 17};
+    private int[] minRequirements = {6, 9, 13, 17};
     private int currentHallIndex = 0;
 
     private int currentObjectCount = 0; // Counter for objects in the hall
@@ -78,12 +79,14 @@ public class BuildMode {
 
     private void initializeBottomPanel() {// for next and save button in bottom of screen
         bottomPanel = new JPanel();
-        bottomPanel.setBounds(50, 700, 1100, 50);
-        bottomPanel.setBackground(new Color(30, 20, 40));
+        bottomPanel.setBounds(1000, 650, 150, 30);
+      //  bottomPanel.setBackground(new Color(30, 20, 40));
         bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        nextButton = new JButton("Next");
+        nextButton = new JButton("Next Hall");
         nextButton.setFont(new Font("Arial", Font.BOLD, 16));
+        nextButton.setBackground(new Color(30, 20, 40));
+        nextButton.setForeground(new Color(30, 20, 40));
         nextButton.addActionListener(e -> checkHallCompletion());
         bottomPanel.add(nextButton);
      // Initialize the Play button (initially hidden)
@@ -97,10 +100,10 @@ public class BuildMode {
     }
     private void goToPlayMode() {
     	 SwingUtilities.invokeLater(() -> {
+    		 frame.dispose();
              GameManager game = new GameManager(getCompletedHalls()); // Transition to GameManager
              game.startGame();
-             MonsterSpawner spawner = new MonsterSpawner(game.getGridLabels(), game.getPlayer(), game.getObjectList());
-             spawner.startSpawning();  
+            
          });
     }
 
@@ -122,7 +125,10 @@ public class BuildMode {
                      cell.setBorder(BorderFactory.createLineBorder(Color.black));
                      cell.setHorizontalAlignment(SwingConstants.CENTER);
      	             cell.setVerticalAlignment(SwingConstants.CENTER);
-     	             
+     	             if(row==GRID_ROWS-1 && col ==3 ) {
+     	            	 ImageIcon icon= new ImageIcon(closeDoor);
+     	            	 cell.setIcon(icon);
+     	             }
 
                      // Set TransferHandler to accept icons
                      cell.setTransferHandler(new TransferHandler("icon") {
@@ -174,7 +180,7 @@ public class BuildMode {
 
     private void checkHallCompletion() {
         if (currentObjectCount >= minRequirements[currentHallIndex]) {
-            JOptionPane.showMessageDialog(frame, hallNames[currentHallIndex] + " is completed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            //JOptionPane.showMessageDialog(frame, hallNames[currentHallIndex] + " is completed!", "Success", JOptionPane.INFORMATION_MESSAGE);
             
             // Save the completed hall grid
             saveCurrentHall();
@@ -182,6 +188,7 @@ public class BuildMode {
             currentHallIndex++;
             if (currentHallIndex < hallNames.length) {
                 loadCurrentHall();
+               // JOptionPane.showMessageDialog(frame, bottomPanel);
             } else {
             	JOptionPane.showMessageDialog(frame, "All halls are completed! Click Play to start!", "Congratulations", JOptionPane.INFORMATION_MESSAGE);
                 nextButton.setVisible(false); // Hide "Next" button

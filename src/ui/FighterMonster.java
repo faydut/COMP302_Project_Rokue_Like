@@ -18,8 +18,14 @@ class FighterMonster extends Monster {
        if (distance == 1) {
            player.loseLife();
        } 
-          // Move randomly
-       int[][] possibleMoves = {
+          fighterMovement();
+       
+           
+       
+   }
+   
+   private void fighterMovement() {
+	   int[][] possibleMoves = {
                {0, 1},  // Move right
                {1, 0},  // Move down
                {-1, 0}, // Move up
@@ -40,8 +46,8 @@ class FighterMonster extends Monster {
            
            ImageIcon image= new ImageIcon(fighter);
            grid[row][col].setIcon(image);// Fighter symbol
+           grid[row][col].setName("nonempty");
        }
-           
-       
+	   
    }
 }

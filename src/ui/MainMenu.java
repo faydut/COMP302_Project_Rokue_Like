@@ -77,6 +77,7 @@ public class MainMenu {
         });
         helpButton.addActionListener(e -> showHelpDialog());
 
+
         exitButton.addActionListener(e -> System.exit(0)); // Exit the application
 
         // Display the frame
@@ -84,6 +85,11 @@ public class MainMenu {
         frame.setVisible(true);
     }
     
+    
+
+    
+    
+
     
 
     
@@ -100,6 +106,7 @@ public class MainMenu {
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 
         // Add hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -156,6 +163,7 @@ public class MainMenu {
                 "Help",
                 JOptionPane.INFORMATION_MESSAGE
         );
+
 }
 
 }

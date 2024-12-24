@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import ui.GameManager;
 
 public class MonsterSpawner {
     private JLabel[][] grid;
@@ -20,6 +21,9 @@ public class MonsterSpawner {
     private String fighter = "src/assets/rokue-like assets/fighter.png";
     private String wizard = "src/assets/rokue-like assets/wizard.png";
     private Timer spawnTimer;
+    private Timer actionTimer;
+    private boolean isPaused = false;
+    private GameManager gameManager;
     
     public ArrayList<Monster> getMonsters() {
 		return monsters;
@@ -27,44 +31,57 @@ public class MonsterSpawner {
 
 	//private Timer actionTimer;
 
-    public MonsterSpawner(JLabel[][] grid, Player player, ArrayList<JLabel> objectList) {
+    public MonsterSpawner(JLabel[][] grid, Player player, ArrayList<JLabel> objectList, GameManager gameManager) {
         this.grid = grid;
         this.player = player;
         this.objectList=  objectList;
+        this.gameManager = gameManager;
     }
    
-
+    
     public void startSpawning() {
-    	monsters.clear();
+        if (spawnTimer == null) {
+            spawnTimer = new Timer(8000, e -> spawnMonster());
+            System.out.println("8 seconds passed");
+        }
+        spawnTimer.start();
 
-    	 if (spawnTimer == null) {
-    	        spawnTimer = new Timer(8000, e -> {
-    	            System.out.println("8 seconds passed");
-    	            spawnMonster();
-    	        });
-    	    }
-    	    spawnTimer.start();
-       
-
-        // Make all monsters act every second
-       
-        
-        
-        Timer actionTimer = new Timer(1000, e -> {
-        	System.out.println("monster length:"+monsters.size());
-            for (Monster monster : monsters) {
-                monster.act(player); // Each monster acts periodically
-            }
-        });
+        if (actionTimer == null) {
+            actionTimer = new Timer(1000, e -> {
+            	System.out.println("monster length:"+monsters.size());
+                for (Monster monster : monsters) {
+                    monster.act(player);
+                }
+            });
+        }
         actionTimer.start();
-       
     }
+    
     public void stopSpawning() {
         if (spawnTimer != null) {
-            spawnTimer.stop(); // Stop the spawn timer
+            spawnTimer.stop();
             System.out.println("Monster spawning stopped.");
         }
-        monsters.clear(); // Clear the list of monsters
+        if (actionTimer != null) {
+            actionTimer.stop();
+        }
+        monsters.clear();
+    }
+    
+    public void pauseSpawning() {
+        if (!isPaused) {
+            if (spawnTimer != null) spawnTimer.stop();
+            if (actionTimer != null) actionTimer.stop();
+            isPaused = true;
+        }
+    }
+
+    public void resumeSpawning() {
+        if (isPaused) {
+            if (spawnTimer != null) spawnTimer.start();
+            if (actionTimer != null) actionTimer.start();
+            isPaused = false;
+        }
     }
 
     private void spawnMonster() {
@@ -96,18 +113,18 @@ public class MonsterSpawner {
 
         switch (type) {
             case 0 -> {
-                monster = new ArcherMonster(row, col);
+                monster = new ArcherMonster(row, col, gameManager);
                 overlayMonster(groundLabel, new ImageIcon(archer), "nonempty");
                 
                // monsterLabel.setForeground(Color.red);
             }
             case 1 -> {
-                monster = new FighterMonster(row, col, grid);
+                monster = new FighterMonster(row, col, grid, gameManager);
                 overlayMonster(groundLabel, new ImageIcon(fighter), "nonempty");
                 //monsterLabel.setForeground(Color.orange);
             }
             case 2 -> {
-                monster = new WizardMonster(row, col, grid,objectList);
+                monster = new WizardMonster(row, col, grid,objectList, gameManager);
                 overlayMonster(groundLabel, new ImageIcon(wizard), "nonempty");
             }
             default -> throw new IllegalStateException("Unexpected monster type: " + type);

@@ -10,12 +10,14 @@ public class Player {
     private int row, col;
     private int lives = 3;
     private boolean wearingCloak = false;
+    private GameManager gameManager;
 
     
-    public Player(int row, int col, GameFrame frame) {
+    public Player(int row, int col, GameFrame frame, GameManager gameManager) {
     	this.frame = frame;
         this.row = row;
         this.col = col;
+        this.gameManager = gameManager;
     }
 
     public int getRow() {
@@ -50,8 +52,8 @@ public class Player {
         lives--;
         System.out.println("Life lost! Remaining lives: " + lives);
         if (lives <= 0) {
-            JOptionPane.showMessageDialog(frame, "You Lose All Lives", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            new MainMenu();
+            gameManager.gameOver("You Lose All Lives"); // Notify GameManager of game over
         }
     }
+
 }

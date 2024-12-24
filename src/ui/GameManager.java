@@ -31,7 +31,8 @@ public class GameManager  {
     public  JLabel[][] gridLabels = new JLabel[gridSize][gridSize];   
     private InventoryPanel inventoryPanel;
     private  HallPanel  hallPanel;
-    private MonsterSpawner spawner; 
+    private MonsterSpawner spawner;
+    private boolean isPaused = false; // Variable to track the game's pause state
    
     private  GameFrame gameFrame;
     public  ArrayList<JLabel >objectList= new ArrayList();
@@ -69,7 +70,7 @@ public class GameManager  {
         playerManager.addGameKeyListener(gameFrame);
         System.out.println("player is null or not:"+ player);
         System.out.println("player getPlayer:"+ getPlayer());
-        spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList());
+        spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList(), this);
         spawner.startSpawning();  
         startTimerForCurrentHall();
       
@@ -110,18 +111,64 @@ public class GameManager  {
 		return objectList;
 	}
 
+	//PAUSE RESUME LOGIC
 
+	public void pauseGame() {
+	    if (hallTimer != null) {
+	        hallTimer.stop();
+	    }
+	    if (spawner != null) {
+	        spawner.pauseSpawning();
+	    }
+	    System.out.println("Game paused.");
+	}
 
+	public void resumeGame() {
+	    if (hallTimer != null) {
+	        hallTimer.start(); // Restart the hall timer
+	    }
+	    if (spawner != null) {
+	        spawner.resumeSpawning(); // Resume monster spawning
+	    }
+//	    reinitializeKeyListener(); // Ensure the KeyListener is active
+	    gameFrame.requestFocusInWindow(); // Regain focus
+	    System.out.println("Game resumed.");
+	}
 	
+	public boolean isPaused() {
+        return isPaused;
+    }
+
+//komik
+//	public void reinitializeKeyListener() {
+//	    playerManager.addGameKeyListener(gameFrame); // Re-add the KeyListener to the frame
+//	    System.out.println("KeyListener reinitialized.");
+//	}
+
+	//PAUSE RESUME LOGIC
 	
-	
+	//lose life time logic
+	public void gameOver(String message) {
+	    if (hallTimer != null) {
+	        hallTimer.stop(); // Stop the hall timer
+	    }
+	    if (spawner != null) {
+	        spawner.stopSpawning(); // Stop monster spawning
+	    }
+
+	    JOptionPane.showMessageDialog(gameFrame, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+	    new MainMenu(); // Return to main menu
+	    gameFrame.dispose(); // Close the game frame
+	}
+
+	//lose life time logic
 
 
 	private void initializeInventoryPanel() {
-		inventoryPanel = new InventoryPanel();
+	    inventoryPanel = new InventoryPanel(gameFrame, this); // Pass the GameManager instance
 	    gameFrame.getContentPane().add(inventoryPanel);
+	}
 
-    }
 	
 	private void updateHallTitle() {
 	    String title = hallNames[currentHallIndex];
@@ -241,6 +288,7 @@ public class GameManager  {
 	        } else {
 	            ((Timer) e.getSource()).stop();
 	            JOptionPane.showMessageDialog(gameFrame, "Time's up! Game Over.", "Game Over", JOptionPane.ERROR_MESSAGE);
+	            gameOver("Time's up! Game Over."); //new addition
 	            new MainMenu();
 	            gameFrame.dispose(); // End the game
 	        }
@@ -317,7 +365,7 @@ public class GameManager  {
         	  addRuneRandomly(); 
               player=  playerManager.placePlayerRandomly();    // Place the player randoml
               System.out.println("second get player:"+getPlayer());
-              spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList());
+              spawner = new MonsterSpawner(getGridLabels(), getPlayer(), getObjectList(), this);
               spawner.startSpawning();  
               startTimerForCurrentHall();
            

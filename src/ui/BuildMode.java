@@ -198,8 +198,7 @@ public class BuildMode {
         
         ImageIcon wallIcon1= iconCreator.getImageIcon(wallPath1);
         wallIcon1.setDescription("wall");
-        ImageIcon wallIcon2= iconCreator.getImageIcon(wallPath2);
-        ImageIcon wallIcon3= iconCreator.getImageIcon(wallPath3);
+        
         
        
 
@@ -218,10 +217,12 @@ public class BuildMode {
 
                 
                 cell.setIcon(floorIcon);
+                cell.setName("empty");
                 if(row ==0 || col==0|| row == GRID_ROWS-1 || col== GRID_COLS-1) {
                 	
                 	    cell.setIcon(null);
                 		cell.setIcon(wallIcon1);
+                		cell.setName("wall");
                 	
                 	
                 }
@@ -236,40 +237,29 @@ public class BuildMode {
                 cell.setTransferHandler(new TransferHandler("icon") {
                     @Override
                     public boolean canImport(TransferSupport support) {
-                        // Allow import only if the cell is empty or contains the placeholder icon
                         return support.isDataFlavorSupported(TransferableIcon.ICON_FLAVOR) &&
-                               (cell.getIcon() == null || cell.getIcon().equals(floorIcon));
+                               "empty".equals(cell.getName());
                     }
 
                     @Override
                     public boolean importData(TransferSupport support) {
                         if (canImport(support)) {
                             try {
-                                // Retrieve the dragged icon
                                 ImageIcon newIcon = (ImageIcon) support.getTransferable().getTransferData(TransferableIcon.ICON_FLAVOR);
-                                
-                                // Check if the cell already contains a valid icon (not the floorIcon)
-                                if (cell.getIcon() != null && !cell.getIcon().equals(floorIcon)) {
-                                    return false; // Cell already occupied
-                                }
 
+                                // Place the new object in the cell
                                 addObjectOverlay(cell, newIcon);
-                                newIcon.setDescription("object");
-
-                                // Update the grid state and increment object count
                                 currentHallGrid[currentRow][currentCol] = newIcon;
                                 currentObjectCount++;
-                                updateHallTitle(); // Update the hall title with the new count
-                                
-                                
-                                return true; // Successful drop
+                                updateHallTitle();
+
+                                return true;
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                        return false; // If not valid, deny the import
-                    }
-                });
+                        return false;
+                    }                });
 
                 hallPanel.add(cell);
             }

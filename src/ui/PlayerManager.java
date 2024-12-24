@@ -18,10 +18,10 @@ public class PlayerManager {
     private final String playerPath= "src/assets/rokue-like assets/player.png";
     public  JLabel[][] gridLabels ;
     private final GameManager gameManager;
+    
     public PlayerManager(GameManager gameManager, JLabel[][] gridLabels) {
     	this.gridLabels= gridLabels;
         this.gameManager = gameManager;
-        
         this.gameFrame= gameManager.getGameFrame();
     }
 
@@ -40,7 +40,7 @@ public class PlayerManager {
         System.out.println("playerCol randomly: " + playerCol);
 
         // Initialize player with the initial random position
-        player = new Player(playerRow, playerCol, gameFrame);
+        player = new Player(playerRow, playerCol, gameFrame, gameManager);
         player.setCol(playerCol);
         player.setRow(playerRow);
 
@@ -90,6 +90,7 @@ public class PlayerManager {
     }
 
  private void movePlayer(int rowChange, int colChange) {
+	 if (gameManager.isPaused()) return;
     	
     	int playerRow=  player.getRow();
         int playerCol= player.getCol();

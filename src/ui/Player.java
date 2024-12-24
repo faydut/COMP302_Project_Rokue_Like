@@ -3,14 +3,16 @@ package ui;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-class Player {
-	private JFrame frame;
+import frames.GameFrame;
+
+public class Player {
+	private GameFrame frame;
     private int row, col;
     private int lives = 3;
     private boolean wearingCloak = false;
 
     
-    public Player(int row, int col, JFrame frame) {
+    public Player(int row, int col, GameFrame frame) {
     	this.frame = frame;
         this.row = row;
         this.col = col;

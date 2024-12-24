@@ -1,4 +1,6 @@
-package ui;
+package monster;
+
+import ui.Player;
 
 class ArcherMonster extends Monster {
     public ArcherMonster(int row, int col) {

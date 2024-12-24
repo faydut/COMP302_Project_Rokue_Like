@@ -1,4 +1,4 @@
-package ui;
+package monster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,8 @@ import java.util.Random;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
+
+import ui.Player;
 
 abstract class Monster {
     protected int row, col;

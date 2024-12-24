@@ -1,9 +1,11 @@
-package ui;
+package monster;
 
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
+
+import ui.Player;
 
 class WizardMonster extends Monster {
 	 private  JLabel[] []grid;

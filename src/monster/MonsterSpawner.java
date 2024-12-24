@@ -1,8 +1,11 @@
-package ui;
+package monster;
 
 import javax.swing.*;
 
+import ui.Player;
+
 import java.awt.Color;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -89,42 +92,50 @@ public class MonsterSpawner {
         Monster monster;
         int type = random.nextInt(3);
         
-        JLabel monsterLabel = grid[row][col];
+        JLabel groundLabel = grid[row][col];
 
         switch (type) {
             case 0 -> {
                 monster = new ArcherMonster(row, col);
-                ImageIcon image= new ImageIcon(archer);
-                monsterLabel.setIcon(image);
-                monsterLabel.setName("nonempty");
+                overlayMonster(groundLabel, new ImageIcon(archer), "nonempty");
                 
                // monsterLabel.setForeground(Color.red);
             }
             case 1 -> {
                 monster = new FighterMonster(row, col, grid);
-                ImageIcon image= new ImageIcon(fighter);
-                monsterLabel.setIcon(image);// Fighter symbol
-                monsterLabel.setName("nonempty");
+                overlayMonster(groundLabel, new ImageIcon(fighter), "nonempty");
                 //monsterLabel.setForeground(Color.orange);
             }
             case 2 -> {
                 monster = new WizardMonster(row, col, grid,objectList);
-                ImageIcon image= new ImageIcon(wizard);
-                monsterLabel.setIcon(image);
-                monsterLabel.setName("nonempty");
+                overlayMonster(groundLabel, new ImageIcon(wizard), "nonempty");
             }
             default -> throw new IllegalStateException("Unexpected monster type: " + type);
         }
 
-        
-       // monsterLabel.setOpaque(true);
-        //monsterLabel.setBackground(Color.BLACK);
-        // Add the monster to the list of active monsters
+      
         
         monsters.add(monster);
        
         
     }
+    private void overlayMonster(JLabel groundLabel, ImageIcon monsterIcon, String monsterType) {
+        // Create a new JLabel for the monster
+        JLabel monsterLabel = new JLabel();
+        monsterIcon = new ImageIcon(monsterIcon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)); // Resize monster icon
+        monsterLabel.setIcon(monsterIcon);
+
+        // Set bounds to center the monster on the ground label
+        monsterLabel.setBounds((groundLabel.getWidth() - 16) / 2, (groundLabel.getHeight() - 16) / 2, 16, 16);
+
+        // Add the monster label to the ground label
+        groundLabel.setLayout(null); // Allow precise positioning
+        groundLabel.add(monsterLabel); // Overlay the monster
+        groundLabel.setName(monsterType); // Update the label's state to indicate it's occupied by a monster
+        groundLabel.revalidate();
+        groundLabel.repaint();
+    }
+
 
    
 }

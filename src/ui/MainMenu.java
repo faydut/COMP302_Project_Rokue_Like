@@ -140,12 +140,17 @@ public class MainMenu {
                         "- Start a New Game: Launches the game with empty halls where you can design and place objects.\n" +
                         "- How to Play:\n" +
                         "   1. Navigate through the dungeon halls (Earth, Air, Water, Fire) to find the hidden runes.\n" +
-                        "   2. Use the arrow keys to move the hero and click on objects to search for runes.\n" +
-                        "   3. Avoid monsters that try to stop you:\n" +
+                        "   2. Use the arrow keys to move the hero:\n" +
+                        "      - Arrow Up: Move up.\n" +
+                        "      - Arrow Down: Move down.\n" +
+                        "      - Arrow Left: Move left.\n" +
+                        "      - Arrow Right: Move right.\n" +
+                        "   3. Click on objects to search for runes.\n" +
+                        "   4. Avoid monsters that try to stop you:\n" +
                         "      - Archer: Shoots arrows if you're too close.\n" +
                         "      - Fighter: Attacks with a dagger when adjacent.\n" +
                         "      - Wizard: Teleports the rune to confuse you.\n" +
-                        "   4. Collect enchantments to gain advantages:\n" +
+                        "   5. Collect enchantments to gain advantages:\n" +
                         "      - Extra Time: Adds time to complete the hall.\n" +
                         "      - Extra Life: Grants an additional life.\n" +
                         "      - Cloak of Protection: Makes you invisible to archers.\n" +
@@ -156,8 +161,9 @@ public class MainMenu {
                         "   - Hall of Air: At least 9 objects.\n" +
                         "   - Hall of Water: At least 13 objects.\n" +
                         "   - Hall of Fire: At least 17 objects.\n" +
-                        "- Objective: Complete all halls by finding their runes within the time limit to win.\n" +
-                        "- Pause: Press 'Pause' to stop and resume the game as needed.\n" +
+                        "- Controls:\n" +
+                        "   - Movement: Arrow keys (Up, Down, Left, Right).\n" +
+                        "   - Pause: Press 'Pause' to stop and resume the game as needed.\n" +
                         "- Exit: Quits the game and returns to the main menu.\n\n" +
                         "Enjoy your adventure and good luck!",
                 "Help",

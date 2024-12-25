@@ -319,8 +319,6 @@ public class GameManager  {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-                   
-                    gridLabels[row][col].removeMouseListener(this);
                 }
             }
         });

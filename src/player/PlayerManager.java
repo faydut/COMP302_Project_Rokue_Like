@@ -1,8 +1,11 @@
-package ui;
+package player;
 
 import javax.swing.*;
 
 import frames.GameFrame;
+import ui.Cell;
+import ui.GameManager;
+import ui.ObjectOverlay;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,13 +16,14 @@ public class PlayerManager {
     private final GameFrame gameFrame;
     private final Random random = new Random();
     private final int gridSize= 12;
-    private final String empty= "empty";
+   
     private ObjectOverlay objectOverlay= new ObjectOverlay();
     private final String playerPath= "src/assets/rokue-like assets/player.png";
-    public  JLabel[][] gridLabels ;
+    private ImageIcon playerIcon= new ImageIcon(playerPath);
+    public  Cell[][] gridLabels ;
     private final GameManager gameManager;
     
-    public PlayerManager(GameManager gameManager, JLabel[][] gridLabels) {
+    public PlayerManager(GameManager gameManager, Cell[][] gridLabels) {
     	this.gridLabels= gridLabels;
         this.gameManager = gameManager;
         this.gameFrame= gameManager.getGameFrame();
@@ -29,7 +33,8 @@ public class PlayerManager {
         return player;
     }
 
-    public Player placePlayerRandomly() {
+    public Player placePlayerRandomly() throws Exception {
+    	
         int playerRow; // Player's starting position
         int playerCol;
 
@@ -39,16 +44,17 @@ public class PlayerManager {
         System.out.println("playerRow randomly: " + playerRow);
         System.out.println("playerCol randomly: " + playerCol);
 
-        // Initialize player with the initial random position
+        // Initialize player with the initial random positio
+       
         player = new Player(playerRow, playerCol, gameFrame, gameManager);
         player.setCol(playerCol);
         player.setRow(playerRow);
 
-        JLabel playerLabel = gridLabels[playerRow][playerCol]; // Get the label for the initial position
-        System.out.println("playerLabel.getName: " + playerLabel.getName());
-
+        Cell playerLabel = gridLabels[playerRow][playerCol]; // Get the label for the initial position
+        System.out.println("playerLabel.isEmpty: " + playerLabel.getIsEmpty());
+        
         // Check if the label is not empty and update the position if needed
-        while (!playerLabel.getName().equals(empty)) { 
+        while (!playerLabel.getIsEmpty()) { 
             playerRow = random.nextInt(gridSize - 2) + 1; 
             playerCol = random.nextInt(gridSize - 2) + 1; 
             System.out.println("loop");
@@ -56,13 +62,14 @@ public class PlayerManager {
             // Update player position
             player.setCol(playerCol);
             player.setRow(playerRow);
-
+           // playerLabel.setEmpty(false);
             // Update playerLabel to the new random position
             playerLabel = gridLabels[playerRow][playerCol];
         }
 
         // Add the player overlay to the final valid position
-        objectOverlay.addPlayerOverlay(playerLabel, playerPath);
+        
+        objectOverlay.overlayLabel(playerLabel, playerIcon,32);
         System.out.println("is here");
         return player;
     }
@@ -71,11 +78,44 @@ public class PlayerManager {
         KeyListener gameKeyListener = new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> movePlayer(-1, 0); // Move up
-                    case KeyEvent.VK_A -> movePlayer(0, -1); // Move left
-                    case KeyEvent.VK_S -> movePlayer(1, 0); // Move down
-                    case KeyEvent.VK_D -> movePlayer(0, 1); // Move right
+                try {
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_UP -> {
+                            try {
+                                movePlayer(-1, 0); // Move up
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                System.out.println("Error while moving player up: " + ex.getMessage());
+                            }
+                        }
+                        case KeyEvent.VK_LEFT -> {
+                            try {
+                                movePlayer(0, -1); // Move left
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                System.out.println("Error while moving player left: " + ex.getMessage());
+                            }
+                        }
+                        case KeyEvent.VK_DOWN -> {
+                            try {
+                                movePlayer(1, 0); // Move down
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                System.out.println("Error while moving player down: " + ex.getMessage());
+                            }
+                        }
+                        case KeyEvent.VK_RIGHT -> {
+                            try {
+                                movePlayer(0, 1); // Move right
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                System.out.println("Error while moving player right: " + ex.getMessage());
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.out.println("Unexpected error in key handling: " + ex.getMessage());
                 }
             }
 
@@ -89,7 +129,7 @@ public class PlayerManager {
         frame.addKeyListener(gameKeyListener);
     }
 
- private void movePlayer(int rowChange, int colChange) {
+ private void movePlayer(int rowChange, int colChange) throws Exception {
 	 if (gameManager.isPaused()) return;
     	
     	int playerRow=  player.getRow();
@@ -99,21 +139,20 @@ public class PlayerManager {
         int newCol = playerCol + colChange;
         
        
-        if(isEmpty(newRow,newCol)==true ||gridLabels[newRow][newCol].getName().equals("openDoor")  ) {
+        if(isEmpty(newRow,newCol)==true   ) {
         	
 
-              JLabel currentLabel = gridLabels[playerRow][playerCol];
+              Cell currentLabel = gridLabels[playerRow][playerCol];
               objectOverlay. revertToGround(currentLabel);
       
-              JLabel newLabel = gridLabels[newRow][newCol];
-              objectOverlay. addPlayerOverlay(newLabel,playerPath);
+              Cell newLabel = gridLabels[newRow][newCol];
+              newLabel.setEmpty(false);
+              objectOverlay. overlayLabel(newLabel,playerIcon,32);
             
             player.setCol(newCol);
             player.setRow(newRow);
-            currentLabel.setName("empty");
-            System.out.println("newRow :"+newRow);
-            System.out.println("newCol:"+newCol);
-            System.out.println("get name :"+gridLabels[newRow][newCol].getName());
+            currentLabel.setEmpty(true);
+            
             
             CheckPlayerInDoor(newRow, newCol);   
             
@@ -122,7 +161,7 @@ public class PlayerManager {
         
     }
  public void CheckPlayerInDoor(int newRow, int newCol) {
-	 if ("openDoor".equals(gridLabels[newRow][newCol].getName())) {
+	 if ("door".equals(gridLabels[newRow][newCol].getName())) {
          System.out.println("Player reached the open door. Loading next hall...");
          gameManager.hallTimer.stop();
          gameManager. cleanHall();
@@ -141,9 +180,9 @@ public class PlayerManager {
  }
  private boolean isEmpty(int row, int col) {
  	//boolean empty= false;
- 	JLabel cell= gridLabels[row][col];
+ 	Cell cell= gridLabels[row][col];
  	
- 	if(cell.getName()==	empty) {
+ 	if(cell.getIsEmpty()==true) {
  		
  		return true;
  	}

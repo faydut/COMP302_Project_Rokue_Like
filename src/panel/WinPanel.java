@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import ui.GameManager;
+import ui.MainMenu;
 
 public class WinPanel {
 	
@@ -34,7 +35,8 @@ public class WinPanel {
         startNewGameButton.addActionListener(e -> {
             winDialog.dispose(); // Close the dialog
             try {
-                 manager.startGame(); // Restart the game
+               // manager.startGame(); 
+                 new MainMenu();// Restart the game
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

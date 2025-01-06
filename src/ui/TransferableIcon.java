@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 public class TransferableIcon implements Transferable {
     private final ImageIcon icon;
 
-    // Define a custom DataFlavor for ImageIcon
     public static final DataFlavor ICON_FLAVOR = new DataFlavor(ImageIcon.class, "ImageIcon");
 
     public TransferableIcon(ImageIcon icon) {
@@ -34,3 +33,4 @@ public class TransferableIcon implements Transferable {
         return icon;
     }
 }
+

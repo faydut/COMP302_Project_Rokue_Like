@@ -9,9 +9,9 @@ public class CreateImageIcon {
 	
 	
 	
-	public ImageIcon getImageIcon (String path) throws Exception {
+	public ImageIcon getImageIcon (String path, int targetWidth,int targetHeight) throws Exception {
 		
-		BufferedImage image = resizer.convertImage(path);
+		BufferedImage image = resizer.convertImage(path,targetWidth, targetHeight);
         ImageIcon icon = new ImageIcon(image);
         return icon;
 		

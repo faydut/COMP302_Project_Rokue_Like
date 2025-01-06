@@ -23,7 +23,7 @@ public class MainMenu {
 
         // Background panel
         JPanel backgroundPanel = new JPanel();
-        backgroundPanel.setBackground(new Color(50, 30, 60)); // Purple color
+        backgroundPanel.setBackground(new Color(50, 34, 40)); // Purple color
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
         frame.add(backgroundPanel);
 

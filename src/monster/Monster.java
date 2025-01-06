@@ -2,13 +2,14 @@ package monster;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.Random;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
+
+import player.Player;
 import ui.GameManager;
-import ui.Player;
 
 public abstract class Monster {
     protected int row, col;

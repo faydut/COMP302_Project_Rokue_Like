@@ -1,16 +1,19 @@
-package ui;
+package player;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import frames.GameFrame;
+import panel.InventoryPanel;
+import ui.GameManager;
 
 public class Player {
 	private GameFrame frame;
     private int row, col;
-    private int lives = 3;
+    private int lives = 3;//
     private boolean wearingCloak = false;
     private GameManager gameManager;
+    private InventoryPanel panel;
 
     
     public Player(int row, int col, GameFrame frame, GameManager gameManager) {
@@ -18,8 +21,24 @@ public class Player {
         this.row = row;
         this.col = col;
         this.gameManager = gameManager;
+        
+        panel= gameManager.getInventoryPanel();
+        
     }
 
+    public void addLive(int live) {
+    	lives+=live;
+    	panel.updateLives(lives);
+    }
+
+    public void loseLife() {
+        lives--;
+        panel.updateLives(lives);
+        
+        if (lives <= 0) {
+            gameManager.gameOver("You Lose All Lives"); // Notify GameManager of game over
+        }
+    }
     public int getRow() {
         return row;
     }
@@ -40,20 +59,13 @@ public class Player {
         return col;
     }
 
-    public boolean isWearingCloak() {
+    public boolean getWearingCloak() {
         return wearingCloak;
     }
 
-    public void wearCloak() {
+    public void setWearCloak() {
         this.wearingCloak = true;
     }
 
-    public void loseLife() {
-        lives--;
-        System.out.println("Life lost! Remaining lives: " + lives);
-        if (lives <= 0) {
-            gameManager.gameOver("You Lose All Lives"); // Notify GameManager of game over
-        }
-    }
 
 }

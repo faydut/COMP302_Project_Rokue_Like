@@ -18,8 +18,8 @@ public class HallPanel extends JPanel {
     private void initializeTitleLabel() {
         hallTitleLabel = new JLabel();
         hallTitleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        hallTitleLabel.setForeground(Color.BLACK);
-        hallTitleLabel.setBounds(50, 10, 400, 30);
+        hallTitleLabel.setForeground(Color.white);
+        hallTitleLabel.setBounds(300, 10, 400, 30);
         add(hallTitleLabel); // Add the title label to this panel
     }
 

@@ -6,16 +6,17 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+import player.Player;
+import ui.Cell;
 import ui.GameManager;
-import ui.Player;
 
 public class WizardMonster extends Monster {
-    private JLabel[][] grid;
-    private ArrayList<JLabel> objectList;
+    private Cell[][] grid;
+    private ArrayList<Cell> objectList;
 
-    public WizardMonster(int row, int col, JLabel[][] grid, ArrayList<JLabel> objectList, GameManager gameManager) {
+    public WizardMonster(int row, int col, ArrayList<Cell> objectList, GameManager gameManager) {
         super(row, col, gameManager);
-        this.grid = grid;
+        this.grid = gameManager.getGridLabels();
         this.objectList = objectList;
     }
 
@@ -27,12 +28,12 @@ public class WizardMonster extends Monster {
     }
 
     private void teleportRune() {
-        for (JLabel obj : objectList) {
-            if (obj.getName().equals("rune")) {
-                obj.setName("nonempty");
-            }
-        }
+    	for(Cell cell: objectList) {
+    		if(cell.getCellRune().equals("rune")) {
+    			cell.setCellRune("notRune");
+    		}
+    	}
         int num = new java.util.Random().nextInt(objectList.size());
-        objectList.get(num).setName("rune");
+        objectList.get(num).setCellRune("rune");
     }
 }

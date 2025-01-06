@@ -339,8 +339,28 @@ public class GameManager  {
 		
 	}
 	
+<<<<<<< HEAD
 	
 	
+=======
+    private void addMouseListener(int row, int col) {
+    	gridLabels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+            	if (e.getButton() == MouseEvent.BUTTON1) { // Check for right-click  button 1 for left click and button3 for right click
+            		System.out.println("it is clicked");
+            		try {
+						handleCellClick(row, col);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                }
+            }
+        });
+    	
+    }
+>>>>>>> bfa1ef83c5b7e292a53451644ecdf1ff7b5b4216
     public void cleanHall() {
     	 // Remove all components from the hall panel
         hallPanel.removeAll();

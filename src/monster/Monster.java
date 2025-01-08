@@ -2,12 +2,9 @@ package monster;
 
 
 import java.util.ArrayList;
-
 import java.util.Random;
-
 import javax.swing.JLabel;
 import javax.swing.Timer;
-
 import player.Player;
 import ui.GameManager;
 

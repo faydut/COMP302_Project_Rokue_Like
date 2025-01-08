@@ -62,6 +62,10 @@ public class MonsterSpawner {
         if (actionTimer == null) {
             actionTimer = new Timer(1000, e -> {
             	
+            	// Use an iterator to safely remove inactive monsters
+                monsters.removeIf(monster -> monster instanceof WizardMonster && !((WizardMonster) monster).isActive());
+            	
+             // Execute `act` for all active monsters
                 for (Monster monster : monsters) {
                     monster.act(player);
                 }

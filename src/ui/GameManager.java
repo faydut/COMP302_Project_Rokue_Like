@@ -31,7 +31,7 @@ public class GameManager  {
     private  String closeDoorPath = "src/assets/items/door_closed.png";
     
     public Timer hallTimer; // Timer for countdown
-    private int timeLeft;  
+    public int timeLeft;  
 	private int currentHallIndex = 0; // Tracks the current hall
 	public  Player player;
 	private Random random = new Random();
@@ -109,7 +109,9 @@ public class GameManager  {
     	this.completedHalls= completedHalls;
     }
     
-    
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
     
     
 
@@ -339,10 +341,8 @@ public class GameManager  {
 		
 	}
 	
-<<<<<<< HEAD
-	
-	
-=======
+// HEAD
+
     private void addMouseListener(int row, int col) {
     	gridLabels[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -360,7 +360,7 @@ public class GameManager  {
         });
     	
     }
->>>>>>> bfa1ef83c5b7e292a53451644ecdf1ff7b5b4216
+// bfa1ef83c5b7e292a53451644ecdf1ff7b5b4216
     public void cleanHall() {
     	 // Remove all components from the hall panel
         hallPanel.removeAll();

@@ -44,7 +44,7 @@ public class PlayerManager {
         System.out.println("playerRow randomly: " + playerRow);
         System.out.println("playerCol randomly: " + playerCol);
 
-        // Initialize player with the initial random positio
+        // Initialize player with the initial random position
        
         player = new Player(playerRow, playerCol, gameFrame, gameManager);
         player.setCol(playerCol);

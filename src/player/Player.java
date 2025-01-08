@@ -50,6 +50,10 @@ public class Player {
 	public void setRow(int row) {
 		this.row = row;
 	}
+	
+    public GameManager getGameManager() {
+        return gameManager;
+    }
 
 	public void setCol(int col) {
 		this.col = col;

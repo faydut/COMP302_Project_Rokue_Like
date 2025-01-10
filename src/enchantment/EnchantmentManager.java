@@ -88,6 +88,7 @@ public class EnchantmentManager {
 					e1.printStackTrace();
 				}
 			});
+            gameManager.addTimer(spawnTimer); // Register the spawn timer with GameManager
             System.out.println("12 seconds passed");
         }
         spawnTimer.start();
@@ -120,12 +121,15 @@ public class EnchantmentManager {
         if (spawnTimer != null) {
             spawnTimer.stop();
             System.out.println("Monster spawning stopped.");
+            gameManager.removeTimer(spawnTimer); // Remove the spawn timer from GameManager
         }
         if (actionTimer != null) {
             actionTimer.stop();
+            gameManager.removeTimer(actionTimer); // Remove the action timer from GameManager
         }
         if (removalTimer != null) {
         	removalTimer.stop();
+        	gameManager.removeTimer(removalTimer); // Remove the removal timer from GameManager
         }
        
     }
@@ -243,6 +247,7 @@ public class EnchantmentManager {
         removalTimer = new Timer(6000, e -> removeEnchantmentfromHall(enchantmentCell));
         System.out.println("6 seconds passed");
         removalTimer.setRepeats(false); // Ensure the timer only runs once
+        gameManager.addTimer(removalTimer); // Register the removal timer with GameManager
         removalTimer.start();
 
         

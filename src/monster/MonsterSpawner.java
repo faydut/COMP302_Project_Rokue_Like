@@ -55,6 +55,7 @@ public class MonsterSpawner {
 					e1.printStackTrace();
 				}
 			});
+            gameManager.addTimer(spawnTimer); // Register spawnTimer with GameManager
             System.out.println("8 seconds passed");
         }
         spawnTimer.start();
@@ -70,6 +71,7 @@ public class MonsterSpawner {
                     monster.act(player);
                 }
             });
+            gameManager.addTimer(actionTimer); // Register actionTimer with GameManager
         }
         actionTimer.start();
     }

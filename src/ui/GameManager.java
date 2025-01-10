@@ -1,3 +1,4 @@
+
 package ui;
 
 import javax.swing.*;
@@ -5,6 +6,7 @@ import javax.swing.*;
 import enchantment.EnchantmentManager;
 import frames.GameFrame;
 import monster.MonsterSpawner;
+import panel.GameOverPanel;
 import panel.HallPanel;
 import panel.InventoryPanel;
 import panel.WinPanel;
@@ -22,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+
+
+
 public class GameManager  {
     private  final int gridSize = 12;
     private  final String rune = "src/assets/items/icons8-key-16.png";
@@ -29,7 +34,8 @@ public class GameManager  {
     private String wallPath= "src/assets/items/wall_gargoyle_red_1.png";
     private String groundPath= "src/assets/items/floor_mud_e.png";
     private  String closeDoorPath = "src/assets/items/door_closed.png";
-    
+    private GameOverPanel gameOverPanel = new GameOverPanel(); // Add this as a class field // importla birlikte bu
+
     public Timer hallTimer; // Timer for countdown
     public int timeLeft;  
 	private int currentHallIndex = 0; // Tracks the current hall
@@ -176,10 +182,8 @@ public class GameManager  {
 	    if (enchantmentManager != null) {
 	    	enchantmentManager.stopSpawning(); // Stop monster spawning
 	    }
+	    gameOverPanel.displayGameOverPanel(gameFrame, this, message);
 
-	    JOptionPane.showMessageDialog(gameFrame, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-	    new MainMenu(); // Return to main menu
-	    gameFrame.dispose(); // Close the game frame
 	}
 
 	

@@ -385,26 +385,6 @@ public class GameManager  {
         hallPanel.repaint();
     
     }
-    /* 
-      * Requires:
- *  - `currentHallIndex` is within the bounds of `completedHalls`.
- *  - `completedHalls` contains at least one valid hall (non-null `Cell[][]` objects).
- *  - Dependencies such as `playerManager`, `monsterSpawner`, and `enchantmentManager` are properly initialized.
- * 
- * Modifies:
- *  - Advances `currentHallIndex` to the next hall.
- *  - Resets and reinitializes the game grid (`gridLabels`) for the new hall.
- *  - Clears and restarts the monster spawner and enchantment spawner.
- *  - Places the player in a valid starting position in the new hall.
- * 
- * Effects:
- *  - Transitions the game to the next hall.
- *  - If there are no more halls, triggers the win panel (`winPanel.displayWinPanel()`).
- *  - Throws `Exception` if initialization or spawner setup fails.
-     
- 
- 
-    */
     
 
     public void loadNextHall() throws Exception {

@@ -48,30 +48,33 @@ public class MonsterSpawner {
     public void startSpawning() {
         if (spawnTimer == null) {
             spawnTimer = new Timer(8000, e -> {
-				try {
-					spawnMonster();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			});
-            gameManager.addTimer(spawnTimer); // Register spawnTimer with GameManager
+                try {
+                    spawnMonster();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            gameManager.addTimer(spawnTimer);
             System.out.println("8 seconds passed");
         }
         spawnTimer.start();
 
         if (actionTimer == null) {
             actionTimer = new Timer(1000, e -> {
-            	
-            	// Use an iterator to safely remove inactive monsters
+                // Remove inactive monsters
                 monsters.removeIf(monster -> monster instanceof WizardMonster && !((WizardMonster) monster).isActive());
-            	
-             // Execute `act` for all active monsters
+
+                // Execute `act` for all active monsters
                 for (Monster monster : monsters) {
-                    monster.act(player);
+                    if (monster instanceof WizardMonster wizardMonster) {
+                        // Ensure wizard behavior triggers once per zone
+                        wizardMonster.act(player);
+                    } else {
+                        monster.act(player); // Other monsters act normally
+                    }
                 }
             });
-            gameManager.addTimer(actionTimer); // Register actionTimer with GameManager
+            gameManager.addTimer(actionTimer);
         }
         actionTimer.start();
     }
@@ -130,7 +133,7 @@ public class MonsterSpawner {
         
         Cell groundLabel = grid[row][col];
 
-        switch (type) {
+        switch (2) {
             case 0 -> {
                 monster = new ArcherMonster(row, col, gameManager);
                 objectOverlay.overlayLabel(groundLabel, new ImageIcon(archer), 32);

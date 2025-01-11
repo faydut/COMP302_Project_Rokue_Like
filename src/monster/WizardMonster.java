@@ -1,8 +1,8 @@
 package monster;
 
+import java.util.Timer;
 import java.util.ArrayList;
 import javax.swing.JLabel;
-import javax.swing.Timer;
 import player.Player;
 import ui.Cell;
 import ui.GameManager;
@@ -15,6 +15,8 @@ public class WizardMonster extends Monster {
     private ObjectOverlay objectOverlay = new ObjectOverlay();
     public int row, col; // Ensure these fields are accessible
     private boolean isActive = true;
+    private Timer behaviorTimer; // Reference to the timer used in behaviors
+    private int lastBehaviorZone = -1; // Keeps track of the last executed behavior zone
 
     public WizardMonster(int row, int col, ArrayList<Cell> objectList, GameManager gameManager) {
         super(row, col, gameManager);
@@ -22,6 +24,7 @@ public class WizardMonster extends Monster {
         this.objectList = objectList;
         this.row = row;
         this.col = col;
+        
     }
     
     public Cell[][] getGrid() {
@@ -45,22 +48,25 @@ public class WizardMonster extends Monster {
 
     
     public void act(Player player) {
-    	if (!isActive) return; // Prevent execution if the wizard is inactive
-    	
-        // This method will be called every second
-        int totalTime = 100; // Assuming total time is 100 for percentage calculation
+        if (!isActive) return;
+
+        int totalTime = 100; // Total time for the level (adjust as needed)
         int remainingTime = gameManager.timeLeft;
         int percentage = (remainingTime * 100) / totalTime;
 
-        if (percentage < 30) {
-            behavior = new LowTimeBehavior();
-        } else if (percentage > 70) {
-            behavior = new HighTimeBehavior();
-        } else {
-            behavior = new MidTimeBehavior();
-        }
+        // Determine behavior zone: 0 (low), 1 (mid), 2 (high)
+        int currentZone = (percentage < 30) ? 0 : (percentage > 70 ? 2 : 1);
 
-        behavior.executeBehavior(this, player, remainingTime);
+        // If the zone has not changed, do nothing
+        if (currentZone == lastBehaviorZone) return;
+
+        // Execute behavior for the current zone
+        lastBehaviorZone = currentZone;
+        switch (currentZone) {
+            case 0 -> new LowTimeBehavior().executeBehavior(this, player, remainingTime);
+            case 1 -> new MidTimeBehavior().executeBehavior(this, player, remainingTime);
+            case 2 -> new HighTimeBehavior().executeBehavior(this, player, remainingTime);
+        }
     }
 
 //    private void teleportRune() {
@@ -73,8 +79,20 @@ public class WizardMonster extends Monster {
 //        objectList.get(num).setCellRune("rune");
 //    }
     
+    public void setBehaviorTimer(Timer timer) {
+        if (behaviorTimer != null) {
+            behaviorTimer.cancel();
+            behaviorTimer.purge();
+        }
+        this.behaviorTimer = timer;
+    }
+    
     public void disappear() {
-    	isActive = false; // Mark the wizard as inactive
+        isActive = false; // Mark the wizard as inactive
+        if (behaviorTimer != null) {
+            behaviorTimer.cancel();
+            behaviorTimer.purge();
+        }
         objectOverlay.revertToGround(grid[row][col]);
         System.out.println("Wizard disappeared.");
     }

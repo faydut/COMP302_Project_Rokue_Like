@@ -17,6 +17,11 @@ public class HighTimeBehavior implements WizardBehavior {
     public void executeBehavior(WizardMonster monster, Player player, int remainingTime) {
         if (!monster.isActive()) return;
 
+        // If a timer is already running, do not create a new one
+        if (behaviorTimer != null && behaviorTimer.isRunning()) {
+            return;
+        }
+
         ArrayList<Cell> objectList = monster.getObjectList();
         behaviorTimer = new Timer(3000, new ActionListener() {
             @Override
@@ -24,19 +29,20 @@ public class HighTimeBehavior implements WizardBehavior {
                 if (!monster.isActive()) {
                     behaviorTimer.stop();
                     monster.gameManager.removeTimer(behaviorTimer); // Remove the timer from GameManager
+                    behaviorTimer = null; // Clear the reference to avoid reuse
                     return;
                 }
 
                 // Clear the old rune location
                 for (Cell obj : objectList) {
                     if ("rune".equals(obj.getName())) {
-                        obj.setName("nonempty");
+                        obj.setCellRune("noRune");
                     }
                 }
 
                 // Move the rune to a new random location
                 int randomIndex = new Random().nextInt(objectList.size());
-                objectList.get(randomIndex).setName("rune");
+                objectList.get(randomIndex).setCellRune("rune");
                 System.out.println("Wizard moved the rune to a new location!");
             }
         });

@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Documents/tolga_test_draft.pdf</name>
+			<type>1</type>
+			<location>C:/Users/tolga/OneDrive/Masaüstü/tolga_test_draft.pdf</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -13,7 +13,7 @@ import ui.ObjectOverlay;
 
 public class FighterMonster extends Monster {
 	private boolean isLuringActive= false;
-	private Timer luringTimer; 
+	public Timer luringTimer; 
 	private ObjectOverlay objectOverlay= new ObjectOverlay();
 	
     
@@ -21,7 +21,8 @@ public class FighterMonster extends Monster {
     private String fighterIconPath = "src/assets/rokue-like assets/fighter.png";
     private ImageIcon fighterIcon= new ImageIcon(fighterIconPath);
     private String direction="";  // look at here do not forget:
-    int newRow, newCol;
+    static int newRow;
+	int newCol;
     int[] selectedMove;
     
 
@@ -63,7 +64,23 @@ public class FighterMonster extends Monster {
     }
   
 
-    private void moveFighter() throws Exception {
+    public static int getNewRow() {
+		return newRow;
+	}
+
+	public void setNewRow(int newRow) {
+		this.newRow = newRow;
+	}
+
+	public int getNewCol() {
+		return newCol;
+	}
+
+	public void setNewCol(int newCol) {
+		this.newCol = newCol;
+	}
+
+	private void moveFighter() throws Exception {
     	if (!isLuringActive) {
             moveRandomly();
         } else {
@@ -74,7 +91,7 @@ public class FighterMonster extends Monster {
             }
         }
  }
-    private void  moveRandomly() throws Exception{
+    public void  moveRandomly() throws Exception{
 		   int[][] moves = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}, }; // Possible moves
 	       selectedMove = moves[new java.util.Random().nextInt(moves.length)];
 	       newRow = row + selectedMove[0];

@@ -1,7 +1,8 @@
 package ui;
 
+import javax.swing.Timer;
+import java.util.List;
 import javax.swing.*;
-
 import enchantment.EnchantmentManager;
 import frames.GameFrame;
 import monster.MonsterSpawner;
@@ -10,7 +11,6 @@ import panel.InventoryPanel;
 import panel.WinPanel;
 import player.Player;
 import player.PlayerManager;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -30,6 +30,7 @@ public class GameManager  {
     private String groundPath= "src/assets/items/floor_mud_e.png";
     private  String closeDoorPath = "src/assets/items/door_closed.png";
     
+    private List<Timer> timers = new ArrayList<>();
     public Timer hallTimer; // Timer for countdown
     public int timeLeft;  
 	public int currentHallIndex = 0; // Tracks the current hall
@@ -132,6 +133,22 @@ public class GameManager  {
 	}
 
 	//PAUSE RESUME LOGIC
+	
+    public void addTimer(Timer timer) {
+        timers.add(timer);
+    }
+
+    // Pause all timers
+    public void pauseAllTimers() {
+        for (Timer timer : timers) {
+            if (timer.isRunning()) {
+                timer.stop();
+            }
+        }
+        if (hallTimer != null) hallTimer.stop();
+        if (monsterSpawner != null) monsterSpawner.pauseSpawning();
+        if (enchantmentManager != null) enchantmentManager.pauseSpawning();
+    }
 
 	public void pauseGame() {
 	    if (hallTimer != null) {
@@ -147,41 +164,52 @@ public class GameManager  {
 	    System.out.println("Game paused.");
 	}
 
-	public void resumeGame() {
-	    if (hallTimer != null) {
-	        hallTimer.start(); // Restart the hall timer
-	    }
-	    if (monsterSpawner != null) {
-	    	monsterSpawner.resumeSpawning(); // Resume monster spawning
-	    }
-	    if (enchantmentManager != null) {
-	    	enchantmentManager.resumeSpawning(); // Resume monster spawning
-	    }
 
-	    gameFrame.requestFocusInWindow(); // Regain focus
-	    System.out.println("Game resumed.");
-	}
+    // Resume all timers
+    public void resumeAllTimers() {
+        for (Timer timer : timers) {
+            timer.start();
+        }
+        if (hallTimer != null) hallTimer.start();
+        if (monsterSpawner != null) monsterSpawner.resumeSpawning();
+        if (enchantmentManager != null) enchantmentManager.resumeSpawning();
+    }
+
+    // Remove a timer from the central list
+    public void removeTimer(Timer timer) {
+        timers.remove(timer);
+    }
+    
+    
+    
+    // Pause the game
+    public void pauseGame() {
+        isPaused = true;
+        pauseAllTimers(); // Pause all registered timers and components
+        System.out.println("Game paused.");
+    }
+
+    public void resumeGame() {
+        isPaused = false;
+        resumeAllTimers(); // Resume all registered timers
+        gameFrame.requestFocusInWindow(); // Regain focus
+        System.out.println("Game resumed.");
+    }
 	
 	public boolean isPaused() {
         return isPaused;
     }
 
 
-	public void gameOver(String message) {
-	    if (hallTimer != null) {
-	        hallTimer.stop(); // Stop the hall timer
-	    }
-	    if (monsterSpawner != null) {
-	    	monsterSpawner.stopSpawning(); // Stop monster spawning
-	    }
-	    if (enchantmentManager != null) {
-	    	enchantmentManager.stopSpawning(); // Stop monster spawning
-	    }
-
-	    JOptionPane.showMessageDialog(gameFrame, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-	    new MainMenu(); // Return to main menu
-	    gameFrame.dispose(); // Close the game frame
-	}
+	// Handle game over logic
+    public void gameOver(String message) {
+        isPaused = true; // Pause the game
+        pauseAllTimers(); // Pause all registered timers and components
+        JOptionPane.showMessageDialog(gameFrame, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        new MainMenu(); // Navigate to the main menu
+        gameFrame.dispose(); // Close the game frame
+        System.out.println("Game over: " + message);
+    }
 
 	
 

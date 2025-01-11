@@ -129,7 +129,7 @@ public class MonsterSpawner {
         }
         
         Monster monster;
-        int type = random.nextInt(3);
+        int type = 2;//random.nextInt(3);
         
         Cell groundLabel = grid[row][col];
 

@@ -42,10 +42,7 @@ public class PlayerManager {
     repOk Method
     This method ensures the representation invariant is maintained.*/
     
-    
-    
-    
-    
+  
     
     public PlayerManager(GameManager gameManager, Cell[][] gridLabels) {
     	this.gridLabels= gridLabels;

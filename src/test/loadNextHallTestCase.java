@@ -15,7 +15,7 @@ import player.PlayerManager;
 import java.awt.Color;
 import java.util.ArrayList;
 
-class GameManagerTest {
+class loadNextHallTestCase {
 	private GameManager gameManager;
     private ArrayList<Cell[][]> completedHalls;
 

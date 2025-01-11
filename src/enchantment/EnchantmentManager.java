@@ -191,7 +191,7 @@ public class EnchantmentManager {
         
         
         
-        int type = random.nextInt(5);
+        int type = 2;//random.nextInt(5);
         System.out.println("enchantment row:"+enchantmentRow);
         System.out.println("enchantment col:"+enchantmentCol);
         enchantmentCell = grid[enchantmentRow][enchantmentCol];

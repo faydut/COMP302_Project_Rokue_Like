@@ -18,11 +18,12 @@ public class LowTimeBehavior implements WizardBehavior {
     	
         try {
             // Clear the wizard's cell using revertToGround
-            objectOverlay.revertToGround(monster.getGrid()[monster.row][monster.col]);
+          //  objectOverlay.revertToGround(monster.getGrid()[monster.row][monster.col]);
             
          // Clear the player's current position using revertToGround
             PlayerManager playerManager = monster.gameManager.getPlayerManager();
-            objectOverlay.revertToGround(playerManager.gridLabels[player.getRow()][player.getCol()]);
+     
+            objectOverlay.revertToGround(playerManager.gridLabels[monster.gameManager.getPlayerManager().getPlayer().getRow()][monster.gameManager.getPlayerManager().getPlayer().getCol()]);
 
             // Teleport the player to a new random position
             playerManager.placePlayerRandomly();

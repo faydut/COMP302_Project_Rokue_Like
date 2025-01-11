@@ -35,14 +35,17 @@ public class HighTimeBehavior implements WizardBehavior {
 
                 // Clear the old rune location
                 for (Cell obj : objectList) {
-                    if ("rune".equals(obj.getName())) {
+                    if ("rune".equals(obj.getCellRune())) {
                         obj.setCellRune("noRune");
                     }
                 }
 
                 // Move the rune to a new random location
                 int randomIndex = new Random().nextInt(objectList.size());
+                System.out.println("random index:"+randomIndex );
                 objectList.get(randomIndex).setCellRune("rune");
+                
+
                 System.out.println("Wizard moved the rune to a new location!");
             }
         });

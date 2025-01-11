@@ -150,21 +150,7 @@ public class GameManager  {
         if (enchantmentManager != null) enchantmentManager.pauseSpawning();
     }
 
-	public void pauseGame() {
-	    if (hallTimer != null) {
-	        hallTimer.stop();
-	    }
-	    if (monsterSpawner != null) {
-	    	monsterSpawner.pauseSpawning();
-	    }
-	    if (enchantmentManager != null) {
-	    	enchantmentManager.pauseSpawning();
-	    }
-	    isPaused=true;
-	    System.out.println("Game paused.");
-	}
-
-
+	
     // Resume all timers
     public void resumeAllTimers() {
         for (Timer timer : timers) {
@@ -524,7 +510,7 @@ private void addMouseListener(int row, int col) {
 	}
 
 
-    private void handleCellClick(int row, int col) throws Exception {
+    public void handleCellClick(int row, int col) throws Exception {
     	int distance = Math.abs(player.getRow() - row) + Math.abs(player.getCol() - col);
         String RuneName =  gridLabels[row][col].getCellRune();
         System.out.println("distance:"+distance);

@@ -23,6 +23,30 @@ public class PlayerManager {
     public  Cell[][] gridLabels ;
     private final GameManager gameManager;
     
+    /*
+    Overview
+    The PlayerManager class manages the player's position and interactions within a grid-based game. It allows for random placement of the player, movement handling, and interactions with game object like door.
+
+    Abstract Function
+    The PlayerManager class represents a manager for the Player in a game world grid. It maintains:
+
+    The player's position (player.getRow() and player.getCol()).
+    The state of the grid (gridLabels) by marking cells as occupied or empty.
+    Interaction logic when the player moves to special grid cells (e.g., "door").
+    
+    Representation Invariant
+    gridLabels must not be null and must have dimensions at least [gridSize][gridSize].
+    The player's position (player.getRow(), player.getCol()) must be within the bounds of gridLabels.
+    The player's current cell in gridLabels must be marked as occupied (setEmpty(false)).
+    
+    repOk Method
+    This method ensures the representation invariant is maintained.*/
+    
+    
+    
+    
+    
+    
     public PlayerManager(GameManager gameManager, Cell[][] gridLabels) {
     	this.gridLabels= gridLabels;
         this.gameManager = gameManager;
@@ -129,7 +153,7 @@ public class PlayerManager {
         frame.addKeyListener(gameKeyListener);
     }
 
- private void movePlayer(int rowChange, int colChange) throws Exception {
+ public void movePlayer(int rowChange, int colChange) throws Exception {
 	 if (gameManager.isPaused()) return;
     	
     	int playerRow=  player.getRow();
@@ -139,7 +163,7 @@ public class PlayerManager {
         int newCol = playerCol + colChange;
         
        
-        if(isEmpty(newRow,newCol)==true   ) {
+        if(isEmpty(newRow,newCol)==true) {
         	
 
               Cell currentLabel = gridLabels[playerRow][playerCol];
@@ -163,8 +187,12 @@ public class PlayerManager {
  public void CheckPlayerInDoor(int newRow, int newCol) {
 	 if ("door".equals(gridLabels[newRow][newCol].getName())) {
          System.out.println("Player reached the open door. Loading next hall...");
-         gameManager.hallTimer.stop();
-         gameManager. cleanHall();
+         
+         if (gameManager.hallTimer != null) {
+        	 gameManager.hallTimer.stop();
+         }
+      
+            gameManager.cleanHall();
     	    gridLabels[player.getRow()][player.getCol()].setIcon(null); 
     	    
          try {
@@ -178,7 +206,7 @@ public class PlayerManager {
 
 	 
  }
- private boolean isEmpty(int row, int col) {
+ public boolean isEmpty(int row, int col) {
  	//boolean empty= false;
  	Cell cell= gridLabels[row][col];
  	
@@ -189,8 +217,34 @@ public class PlayerManager {
  	return false;
  	
  }
- 
- 
+ public boolean repOk() {
+	    if (gridLabels == null || gridLabels.length < gridSize || gridLabels[0].length < gridSize) {
+	        return false; // Grid must be initialized and large enough
+	    }
+
+	    // Check for null entries in the grid
+	    for (int i = 0; i < gridSize; i++) {
+	        for (int j = 0; j < gridSize; j++) {
+	            if (gridLabels[i][j] == null) {
+	                return false; // No cell in the grid should be null
+	            }
+	        }
+	    }
+
+	    if (player != null) {
+	        int row = player.getRow();
+	        int col = player.getCol();
+	        if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
+	            return false; // Player's position must be within bounds
+	        }
+	        if (gridLabels[row][col].getIsEmpty()) {
+	            return false; // Player's current cell must not be empty
+	        }
+	    }
+
+	    return true;
+	}
+
     
     
     

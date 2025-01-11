@@ -32,16 +32,16 @@ public class GameManager  {
     
     public Timer hallTimer; // Timer for countdown
     public int timeLeft;  
-	private int currentHallIndex = 0; // Tracks the current hall
+	public int currentHallIndex = 0; // Tracks the current hall
 	public  Player player;
 	private Random random = new Random();
     public  Cell[][] gridLabels = new Cell[gridSize][gridSize];   
     private InventoryPanel inventoryPanel;
 	private  HallPanel  hallPanel;
-    private MonsterSpawner monsterSpawner;
+    public MonsterSpawner monsterSpawner;
     private boolean isPaused = false; // Variable to track the game's pause state
    
-    private  GameFrame gameFrame;
+    public  GameFrame gameFrame;
     public  ArrayList<Cell >objectList= new ArrayList();
     private ArrayList<Cell> doorList= new ArrayList();
     public  ArrayList<Cell[][]> completedHalls;
@@ -49,7 +49,7 @@ public class GameManager  {
     private CreateImageIcon iconCreator = new CreateImageIcon(); 
     private ObjectOverlay objectOverlay = new ObjectOverlay();
     private WinPanel winPanel= new WinPanel();
-    private EnchantmentManager enchantmentManager ;
+    public EnchantmentManager enchantmentManager ;
     
     private MouseListener objectMouseListener;
     
@@ -94,7 +94,7 @@ public class GameManager  {
 
     }
     
-    private void initializeHallPanel() {
+    public void initializeHallPanel() {
         hallPanel = new HallPanel(gridSize); // Create the HallPanel instance
         gameFrame.add(hallPanel); // Add the HallPanel directly to the frame
     }
@@ -143,6 +143,7 @@ public class GameManager  {
 	    if (enchantmentManager != null) {
 	    	enchantmentManager.pauseSpawning();
 	    }
+	    isPaused=true;
 	    System.out.println("Game paused.");
 	}
 
@@ -185,7 +186,7 @@ public class GameManager  {
 	
 
 
-	private void initializeInventoryPanel() {
+	public void initializeInventoryPanel() {
 		System.out.println("Initializing Inventory Panel");
 	    inventoryPanel = new InventoryPanel(gameFrame, this); // Pass the GameManager instance
 	    System.out.println("inventory panel in initializeInventoryPanel: "+inventoryPanel);
@@ -303,7 +304,7 @@ public class GameManager  {
 	       
 	    
 	}
-	private void startTimerForCurrentHall() {
+	public void startTimerForCurrentHall() {
 	    // Calculate time based on the number of objects in the hall
 	    int objectCount = countObjectsInCurrentHall();
 	    timeLeft = 100;//objectCount * 5; // 5 seconds per object
@@ -327,8 +328,12 @@ public class GameManager  {
 	}
 	
 	private void addRuneRandomly() {
-		int length= objectList.size();
-		System.out.println("length of object list:"+length);
+		
+		int length = objectList.size();
+	    if (length == 0) {
+	        System.out.println("No objects available to add a rune.");
+	        return; // Skip if there are no objects
+	    }
 		
 		int num= random.nextInt(length);
 		System.out.println("before add rune:"+objectList.get(num).getCellRune());
@@ -366,10 +371,36 @@ public class GameManager  {
         hallPanel.repaint();
     
     }
+    /* 
+      * Requires:
+ *  - `currentHallIndex` is within the bounds of `completedHalls`.
+ *  - `completedHalls` contains at least one valid hall (non-null `Cell[][]` objects).
+ *  - Dependencies such as `playerManager`, `monsterSpawner`, and `enchantmentManager` are properly initialized.
+ * 
+ * Modifies:
+ *  - Advances `currentHallIndex` to the next hall.
+ *  - Resets and reinitializes the game grid (`gridLabels`) for the new hall.
+ *  - Clears and restarts the monster spawner and enchantment spawner.
+ *  - Places the player in a valid starting position in the new hall.
+ * 
+ * Effects:
+ *  - Transitions the game to the next hall.
+ *  - If there are no more halls, triggers the win panel (`winPanel.displayWinPanel()`).
+ *  - Throws `Exception` if initialization or spawner setup fails.
+     
+ 
+ 
+    */
     
+
     public void loadNextHall() throws Exception {
     	
+       
         
+        if (completedHalls == null || completedHalls.isEmpty()) {
+            throw new Exception("No halls available"); // Throw an exception if no halls are available
+        }
+
         if (currentHallIndex < completedHalls.size()-1) {
         	if (monsterSpawner != null) {
         		monsterSpawner.stopSpawning();
@@ -382,14 +413,19 @@ public class GameManager  {
         	  initializeInventoryPanel();
         	  inventoryPanel.clearInventoryLabel();
         	  addRuneRandomly(); 
-              player=  playerManager.placePlayerRandomly();   
+              player=  playerManager.placePlayerRandomly(); 
+              System.out.println("before");
+              
+              System.out.println("before");
+             
+              
               System.out.println("second get player:"+getPlayer());
               monsterSpawner.getFighterMonsters().clear();
               monsterSpawner = new MonsterSpawner(getPlayer(), getObjectList(), this);
               System.out.println("size:"+getObjectList().size());
               monsterSpawner.startSpawning();  
               startTimerForCurrentHall();
-              System.out.println("fighter in game manager:"+monsterSpawner.getFighterMonsters());
+             
               
               enchantmentManager.stopSpawning();
               enchantmentManager.clearEnchantmentsMap();
@@ -403,11 +439,14 @@ public class GameManager  {
             
             
         } else {
+        	System.out.println("is here");
         	if (monsterSpawner != null) {
         		monsterSpawner.stopSpawning();
+        		
             }
-            // Display the win panel
         	winPanel.displayWinPanel(gameFrame, this);
+            // Display the win panel
+        	
         }
     }
     private  Cell findDoorLabel() {

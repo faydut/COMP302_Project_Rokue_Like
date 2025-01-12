@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.io.File;
 
 public class MainMenu {
 
@@ -105,12 +106,13 @@ public class MainMenu {
 
         // Create buttons
         JButton startButton = createPlayfulButton("START NEW GAME");
+        JButton loadButton = createPlayfulButton("LOAD GAME");
         JButton helpButton = createPlayfulButton("HELP");
         JButton exitButton = createPlayfulButton("EXIT");
         
         
         // Initialize arrays
-        buttons = new JButton[]{startButton, helpButton, exitButton};
+        buttons = new JButton[]{startButton, loadButton, helpButton, exitButton};
         selectorLabels = new JLabel[buttons.length];
         buttonContainers = new JPanel[buttons.length];
 
@@ -169,6 +171,26 @@ public class MainMenu {
             frame.dispose(); // Close the main menu
             launchGame();    // Start the game
         });
+
+        loadButton.addActionListener(e -> {
+            String filePath = "savefile.dat"; // Path to the saved game file
+            File saveFile = new File(filePath);
+            if (saveFile.exists()) {
+                try {
+                    GameManager gameManager = new GameManager(null); // Initialize GameManager
+                    gameManager.loadGame(filePath); // Load the saved game
+                    gameManager.initializeGameFromState(); // Ensure the game is fully initialized
+                    gameManager.getGameFrame().setVisible(true); // Make the game frame visible
+                    frame.dispose(); // Close the main menu
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Failed to load game: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "No saved game found!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
         helpButton.addActionListener(e -> showHelpDialog());
         exitButton.addActionListener(e -> {
         	animationTimer.stop();

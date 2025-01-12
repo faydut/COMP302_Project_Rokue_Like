@@ -118,7 +118,7 @@ public class InventoryPanel extends JPanel {
         add(livesLabel);
         
     }
-    private void addItemtoMap() throws Exception {
+    public void addItemtoMap() throws Exception {
     	BufferedImage resizedImage = imageResizer.convertImage(luringGemPath,24,24);
         ImageIcon luringIcon = new ImageIcon(resizedImage);
         inventoryItems.put("luring gem", luringIcon);
@@ -210,12 +210,12 @@ public class InventoryPanel extends JPanel {
     public void updateTimeLabel(int timeLeft) {
         timeLabel.setText("Time Left: " + timeLeft + " seconds");
     }
-    
+
     private void showPauseScreen() {
         if (isPaused) return;
 
         isPaused = true;
-        gameManager.pauseGame();
+        gameManager.pauseGame();  // Pause game logic
 
         JDialog pauseDialog = new JDialog(parentFrame, "Paused", true);
         pauseDialog.setSize(400, 400);
@@ -224,22 +224,34 @@ public class InventoryPanel extends JPanel {
 
         JPanel panel = new JPanel();
         panel.setBackground(new Color(0, 0, 0, 200));
-        panel.setLayout(new BorderLayout());
+        panel.setLayout(new GridLayout(2, 1, 10, 10)); // Adjust layout for two buttons
 
+        // Resume Button
         JButton resumeButton = new JButton("Resume");
         resumeButton.setFont(new Font("Arial", Font.BOLD, 20));
         resumeButton.setFocusPainted(false);
         resumeButton.addActionListener(e -> {
-            pauseDialog.dispose();
+            pauseDialog.dispose();  // Close the pause dialog
             isPaused = false;
-            gameManager.resumeGame();
+            gameManager.resumeGame();  // Resume game logic
         });
+        panel.add(resumeButton);
 
-        panel.add(resumeButton, BorderLayout.CENTER);
+        // Save Game Button
+        JButton saveButton = new JButton("Save Game");
+        saveButton.setFont(new Font("Arial", Font.BOLD, 20));
+        saveButton.setFocusPainted(false);
+        saveButton.addActionListener(e -> {
+            String filePath = "savefile.dat"; // Set the save file path
+            gameManager.saveGame(filePath);   // Save the game state
+            JOptionPane.showMessageDialog(pauseDialog, "Game saved successfully!", "Save Game", JOptionPane.INFORMATION_MESSAGE);
+        });
+        panel.add(saveButton);
+
         pauseDialog.add(panel, BorderLayout.CENTER);
-
-        pauseDialog.setVisible(true);
+        pauseDialog.setVisible(true);  // Show the pause screen
     }
+
 
     
    

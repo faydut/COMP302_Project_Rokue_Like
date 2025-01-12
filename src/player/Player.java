@@ -26,9 +26,19 @@ public class Player {
         
     }
 
+    public Player(int row, int col, int lives) {
+        this.row = row;
+        this.col = col;
+        this.lives = lives;
+    }
+
     public void addLive(int live) {
     	lives+=live;
     	panel.updateLives(lives);
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     public void loseLife() {

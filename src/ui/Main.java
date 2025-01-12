@@ -12,7 +12,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
              
              
-             MainMenu menu= new MainMenu();
+             ui.MainMenu menu= new ui.MainMenu();
              
             
         });
